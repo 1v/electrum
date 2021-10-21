@@ -1,0 +1,38 @@
+br
+- if flash[:error]
+  = flash[:error]
+
+- if flash[:notice]
+  = flash[:notice]
+
+= form_for :wallet, url: wallets_path(@wallet), html: { class: 'pure-form' } do |f|
+  fieldset
+    = f.text_field :master_public_key, placeholder: true
+    = f.submit 'Submit', class: 'pure-button pure-button-primary'
+
+table class='pure-table pure-table-horizontal'
+  thead
+    tr
+      th Master Public Key
+      th Confirmed
+      th Unconfirmed
+      th Action
+  tbody
+    - @wallets.each do |wallet|
+     tr
+      td = wallet.master_public_key
+      td
+        - if wallet.balance_confirmed.nil?
+          i pending
+        - else
+          = format_balance(wallet.balance_confirmed)
+      td
+        - if wallet.balance_unconfirmed.nil?
+          i pending
+        - else
+          = format_balance(wallet.balance_unconfirmed)
+      td
+        = link_to wallet_path(wallet), class: 'pure-button button-error',
+            method: :delete,
+            data: { confirm: 'Are you sure?' }
+          ' Delete
